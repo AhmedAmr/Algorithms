@@ -59,7 +59,8 @@ public class LongestSequence {
      * @param input : list that have the integers .
      * @return the length of the longest increasing sub-sequence
      *
-     * @dependes position_fast method : to get the update index.
+     * @dependes position_inc method : to get the strict increasing update index.
+     *  OR       position_non_dec method : to get the non-decreasing update index.
      */
     public static int LIS_fast(ArrayList<Integer>input){
         ArrayList<Integer>res = new ArrayList<>();
@@ -72,7 +73,7 @@ public class LongestSequence {
                 res.add(integer);
                 last++;
             }else {
-                int index = position_fast(res,integer); // O(lg n)
+                int index = position_inc(res,integer); // O(lg n)
                 if(index!=-1){
                     res.set(index,integer);
                 }
@@ -83,7 +84,7 @@ public class LongestSequence {
     }
 
     /**
-     * This is method to get the position for update using binary search.
+     * This is method to get the position for update for Longest Strictly Increasing Subsequence using binary search.
      * Running time : O(lg n)
      * @param list: the list that search will be apply on
      * @param value : the value need to get the appropriate position for it
@@ -93,13 +94,38 @@ public class LongestSequence {
      * }
      *
      */
-    public static int position_fast(ArrayList<Integer>list,int value){
+    public static int position_inc(ArrayList<Integer>list,int value){
         int start = 0;
         int end = list.size()-1;
         while(start!=end){
             int mid = (int)Math.floor((start+end)/2);
             if(value==list.get(mid))return -1;
             if(value>list.get(mid)){
+                start=mid+1;
+            }else{
+                end = mid;
+            }
+        }
+        return start;
+    }
+
+
+    /**
+     * This is method to get the position for update for Longest Non-Decreasing Subsequence using binary search.
+     * Running time : O(lg n)
+     * @param list: the list that search will be apply on
+     * @param value : the value need to get the appropriate position for it
+     * @return {
+     *     i : where i the appropriate insertion index where list[i] is greater than or equal that value && list[i-1] (if found) is strictly less than or equal that value.
+     * }
+     *
+     */
+    public static int position_non_dec(ArrayList<Integer>list,int value){
+        int start = 0;
+        int end = list.size()-1;
+        while(start!=end){
+            int mid = (int)Math.floor((start+end)/2);
+            if(value>=list.get(mid)){
                 start=mid+1;
             }else{
                 end = mid;
