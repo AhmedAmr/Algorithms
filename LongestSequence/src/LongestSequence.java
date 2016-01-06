@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by AhmedAmr on 1/1/16.
@@ -62,7 +63,7 @@ public class LongestSequence {
      * @dependes position_inc method : to get the strict increasing update index.
      *  OR       position_non_dec method : to get the non-decreasing update index.
      */
-    public static int LIS_fast(ArrayList<Integer>input){
+    public static int LIS_length_fast(ArrayList<Integer>input){
         ArrayList<Integer>res = new ArrayList<>();
         int last = 0;
         res.add(input.get(0));
@@ -80,6 +81,56 @@ public class LongestSequence {
             }
         }
         return last+1;
+
+    }
+
+    /**
+     * This algorithm calculates the longest increasing sub-sequence
+     * Running time : O(nlgn)
+     * @param inputArr : list that contains the integers
+     * @return the longest increasing subsequence
+     */
+    public static ArrayList<Integer> LIS_fast(ArrayList<Integer>inputArr){
+        ArrayList<Integer>lis = new ArrayList<>();
+        ArrayList<Integer> input = new ArrayList<>(inputArr);
+        ArrayList<Integer>indeces = new ArrayList<>();
+        int[] parents = new int[inputArr.size()];
+        lis.add(inputArr.get(0));
+        indeces.add(0);
+        int last = 0;
+        inputArr.remove(0);
+        //initialize the parents array with -1
+        for (int i = 0; i < input.size(); i++) {
+            parents[i]=-1;
+        }
+        int current=1; // current item index in input
+        for (Integer integer : inputArr) { // O(n)
+
+            if(integer>lis.get(last)){
+                //append it to the result
+                lis.add(integer);
+                indeces.add(current);
+                parents[current]=indeces.get(last);
+                last++;
+            }else {
+                int index = position_inc(lis,integer); // O(lg n)
+                if(index!=-1){
+                    lis.set(index,integer);
+                    indeces.set(index,current);
+                    if(index-1>-1)
+                        parents[current]= indeces.get(index-1);
+                }
+            }
+            current++;
+        }
+        ArrayList<Integer> results = new ArrayList<>();
+        int iter=indeces.get(last);
+        while(iter!=-1){
+            results.add(input.get(iter));
+            iter = parents[iter];
+        }
+        Collections.reverse(results);
+        return results;
 
     }
 
